@@ -18,7 +18,7 @@ public class EndToEnd {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
-        driver = new ChromeDriver(options);
+        options.setBrowserVersion("113.0.5672.24");
         driver = new ChromeDriver(options);
     }
 
@@ -35,9 +35,11 @@ public class EndToEnd {
         //HOME PAGE
         var addToCartFalcon9 = driver.findElement(By.cssSelector("[data-product_id='28']"));
         addToCartFalcon9.click();
+        Thread.sleep(2000);
 
         var viewCartBtn = driver.findElement(By.cssSelector(".added_to_cart"));
         viewCartBtn.click();
+        Thread.sleep(2000);
 
 
         //CART DETAIL PAGE
@@ -47,25 +49,29 @@ public class EndToEnd {
         var applyCouponBtn = driver.findElement(By.cssSelector("[name='apply_coupon']"));
         applyCouponBtn.click();
 
-        Thread.sleep(3000);
+        Thread.sleep(2000);
 
         var alertMessageWhenAfterAppliedCoupon = driver.findElement(By.cssSelector("[class*='message']"));
         Assert.assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
 
+        Thread.sleep(2000);
         var increaseQtyTxt = driver.findElement(By.cssSelector("[id*='quantity']"));
         increaseQtyTxt.clear();
         increaseQtyTxt.sendKeys("2");
 
-        Thread.sleep(3000);
+        Thread.sleep(2000);
 
         var updateCartBtn = driver.findElement(By.cssSelector("[name*='update']"));
         updateCartBtn.click();
 
-        Thread.sleep(2000);
+        Thread.sleep(5000);
 
         var totalPriceLbl = driver.findElement(By.xpath("//*[@class='order-total']//span"));
         Assert.assertEquals(totalPriceLbl.getText(), "114.00€");
 
+        var checkoutBtn = driver.findElement(By.cssSelector(".checkout-button"));
+        checkoutBtn.click();
+        Thread.sleep(2000);
 
         //BILLING DETAIL PAGE
         var firstnameTxt = driver.findElement(By.cssSelector("#billing_first_name"));
@@ -86,7 +92,38 @@ public class EndToEnd {
         var searchCountryResult = driver.findElement(By.id("select2-billing_country-results"));
         searchCountryResult.click();
 
-        
+        var streetAddressTxt = driver.findElement(By.id("billing_address_1"));
+        streetAddressTxt.sendKeys("29 national street 1K");
+
+        var apartmentAddressTxt = driver.findElement(By.id("billing_address_2"));
+        apartmentAddressTxt.sendKeys("room 1");
+
+        var postcodeTxt = driver.findElement(By.id("billing_postcode"));
+        postcodeTxt.sendKeys("10115");
+
+        var cityAddressTxt = driver.findElement(By.id("billing_city"));
+        cityAddressTxt.sendKeys("Berlin");
+
+        var phoneTxt = driver.findElement(By.cssSelector("#billing_phone"));
+        phoneTxt.sendKeys("0912321233");
+
+        var emailTxt = driver.findElement(By.cssSelector("#billing_email"));
+        emailTxt.sendKeys("info@10007.com");
+
+        var createAnAccountCkb = driver.findElement(By.cssSelector("#createaccount"));
+        createAnAccountCkb.click();
+
+        Thread.sleep(2000);
+        var placeOrderBtn = driver.findElement(By.cssSelector("#place_order"));
+        placeOrderBtn.click();
+
+        Thread.sleep(6000);
+
+        //ORDER RECEIVED
+        var titlePageLbl = driver.findElement(By.cssSelector(".entry-title"));
+        Thread.sleep(2000);
+        Assert.assertEquals(titlePageLbl.getText(), "Order received");
+
 
     }
 
