@@ -3,10 +3,15 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Random;
+
+import static org.testng.Assert.assertEquals;
 
 public class EndToEnd {
     private WebDriver driver;
@@ -15,11 +20,12 @@ public class EndToEnd {
 
     @BeforeMethod
     public void testInit() {
+
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
-        options.setBrowserVersion("113.0.5672.24");
         driver = new ChromeDriver(options);
+
     }
 
     @AfterMethod
@@ -39,7 +45,7 @@ public class EndToEnd {
 
         var viewCartBtn = driver.findElement(By.cssSelector(".added_to_cart"));
         viewCartBtn.click();
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
 
         //CART DETAIL PAGE
@@ -49,17 +55,17 @@ public class EndToEnd {
         var applyCouponBtn = driver.findElement(By.cssSelector("[name='apply_coupon']"));
         applyCouponBtn.click();
 
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         var alertMessageWhenAfterAppliedCoupon = driver.findElement(By.cssSelector("[class*='message']"));
-        Assert.assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
+        assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
 
-        Thread.sleep(2000);
+        Thread.sleep(3000);
         var increaseQtyTxt = driver.findElement(By.cssSelector("[id*='quantity']"));
         increaseQtyTxt.clear();
         increaseQtyTxt.sendKeys("2");
 
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         var updateCartBtn = driver.findElement(By.cssSelector("[name*='update']"));
         updateCartBtn.click();
@@ -67,11 +73,11 @@ public class EndToEnd {
         Thread.sleep(5000);
 
         var totalPriceLbl = driver.findElement(By.xpath("//*[@class='order-total']//span"));
-        Assert.assertEquals(totalPriceLbl.getText(), "114.00€");
+        assertEquals(totalPriceLbl.getText(), "114.00€");
 
         var checkoutBtn = driver.findElement(By.cssSelector(".checkout-button"));
         checkoutBtn.click();
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         //BILLING DETAIL PAGE
         var firstnameTxt = driver.findElement(By.cssSelector("#billing_first_name"));
@@ -108,7 +114,9 @@ public class EndToEnd {
         phoneTxt.sendKeys("0912321233");
 
         var emailTxt = driver.findElement(By.cssSelector("#billing_email"));
-        emailTxt.sendKeys("info@10007.com");
+        var randomEmail = new Random();
+        var randomMail = randomEmail.nextInt(2000);
+        emailTxt.sendKeys("infotest@" + randomMail + ".com");
 
         var createAnAccountCkb = driver.findElement(By.cssSelector("#createaccount"));
         createAnAccountCkb.click();
@@ -121,10 +129,8 @@ public class EndToEnd {
 
         //ORDER RECEIVED
         var titlePageLbl = driver.findElement(By.cssSelector(".entry-title"));
-        Thread.sleep(2000);
-        Assert.assertEquals(titlePageLbl.getText(), "Order received");
-
-
+        Thread.sleep(3000);
+        assertEquals(titlePageLbl.getText(), "Order received");
     }
 
 }
