@@ -113,9 +113,8 @@ public class EndToEnd {
         phoneTxt.sendKeys("0912321233");
 
         var emailTxt = driver.findElement(By.cssSelector("#billing_email"));
-        var randomEmail = new Random();
-        var randomMail = randomEmail.nextInt(2000);
-        emailTxt.sendKeys("infotest@" + randomMail + ".com");
+        emailTxt.sendKeys("info@berlinspaceflowers.com");
+        purchaseEmail = "info@berlinspaceflowers.com";
 
         var createAnAccountCkb = driver.findElement(By.cssSelector("#createaccount"));
         createAnAccountCkb.click();
@@ -129,6 +128,86 @@ public class EndToEnd {
         var titlePageLbl = driver.findElement(By.cssSelector("header .entry-title"));
         Assert.assertEquals(titlePageLbl.getText(), "Order received");
 
+    }
+
+    @Test(priority = 2)
+    public void completePurchaseSuccessfully_whenExistingClient() throws InterruptedException {
+        driver.navigate().to("https://demos.bellatrix.solutions");
+
+        //HOME PAGE
+        var addToCartFalcon9 = driver.findElement(By.cssSelector("[data-product_id='28']"));
+        addToCartFalcon9.click();
+        Thread.sleep(2000);
+
+        var viewCartBtn = driver.findElement(By.cssSelector(".added_to_cart"));
+        viewCartBtn.click();
+        Thread.sleep(3000);
+
+
+        //CART DETAIL PAGE
+        var couponCodeTxt = driver.findElement(By.cssSelector("#coupon_code"));
+        couponCodeTxt.sendKeys("happybirthday");
+
+        var applyCouponBtn = driver.findElement(By.cssSelector("[name='apply_coupon']"));
+        applyCouponBtn.click();
+
+        Thread.sleep(2000);
+
+        var alertMessageWhenAfterAppliedCoupon = driver.findElement(By.cssSelector("[class*='message']"));
+        Assert.assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
+
+        Thread.sleep(2000);
+        var increaseQtyTxt = driver.findElement(By.cssSelector("[id*='quantity']"));
+        increaseQtyTxt.clear();
+        increaseQtyTxt.sendKeys("2");
+
+        Thread.sleep(3000);
+
+        var updateCartBtn = driver.findElement(By.cssSelector("[name*='update']"));
+        updateCartBtn.click();
+
+        Thread.sleep(3000);
+
+        var totalPriceLbl = driver.findElement(By.xpath("//*[@class='order-total']//span"));
+        Assert.assertEquals(totalPriceLbl.getText(), "114.00€");
+
+        var checkoutBtn = driver.findElement(By.cssSelector(".checkout-button"));
+        checkoutBtn.click();
+        Thread.sleep(3000);
+
+        var loginLnk = driver.findElement(By.linkText("Click here to login"));
+        loginLnk.click();
+
+        Thread.sleep(3000);
+
+        var usernameTxt = driver.findElement(By.id("username"));
+        usernameTxt.sendKeys(purchaseEmail);
+
+        var passwordTxt = driver.findElement(By.id("password"));
+        passwordTxt.sendKeys(GetUserPasswordFromDb(purchaseEmail));
+
+        Thread.sleep(2000);
+
+        var loginBtn = driver.findElement(By.cssSelector("button[class*=login]"));
+        loginBtn.click();
+
+        Thread.sleep(2000);
+
+        var placeOrderBtn = driver.findElement(By.cssSelector("#place_order"));
+        placeOrderBtn.click();
+        Thread.sleep(5000);
+
+        //ORDER RECEIVED
+        var titlePageLbl = driver.findElement(By.cssSelector("header .entry-title"));
+        Assert.assertEquals(titlePageLbl.getText(), "Order received");
+
+        var orderNumberLbl = driver.findElement(By.cssSelector(".order strong"));
+        purchaseOrderNumber = orderNumberLbl.getText();
+    }
+
+    private String GetUserPasswordFromDb(String userName)
+    {
+        return "@purISQzt%%DYBnLCIhaoG6$";
     }
 
 }
