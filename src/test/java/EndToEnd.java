@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
 
 import java.util.Random;
 
-import static org.testng.Assert.assertEquals;
 
 public class EndToEnd {
     private WebDriver driver;
@@ -30,7 +29,7 @@ public class EndToEnd {
 
     @AfterMethod
     public void testCleanup() throws InterruptedException {
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.quit();
     }
 
@@ -58,7 +57,7 @@ public class EndToEnd {
         Thread.sleep(3000);
 
         var alertMessageWhenAfterAppliedCoupon = driver.findElement(By.cssSelector("[class*='message']"));
-        assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
+        Assert.assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
 
         Thread.sleep(3000);
         var increaseQtyTxt = driver.findElement(By.cssSelector("[id*='quantity']"));
@@ -73,7 +72,7 @@ public class EndToEnd {
         Thread.sleep(5000);
 
         var totalPriceLbl = driver.findElement(By.xpath("//*[@class='order-total']//span"));
-        assertEquals(totalPriceLbl.getText(), "114.00€");
+        Assert.assertEquals(totalPriceLbl.getText(), "114.00€");
 
         var checkoutBtn = driver.findElement(By.cssSelector(".checkout-button"));
         checkoutBtn.click();
@@ -124,13 +123,12 @@ public class EndToEnd {
         Thread.sleep(2000);
         var placeOrderBtn = driver.findElement(By.cssSelector("#place_order"));
         placeOrderBtn.click();
-
-        Thread.sleep(6000);
+        Thread.sleep(10000);
 
         //ORDER RECEIVED
-        var titlePageLbl = driver.findElement(By.cssSelector(".entry-title"));
-        Thread.sleep(3000);
-        assertEquals(titlePageLbl.getText(), "Order received");
+        var titlePageLbl = driver.findElement(By.cssSelector("header .entry-title"));
+        Assert.assertEquals(titlePageLbl.getText(), "Order received");
+
     }
 
 }
