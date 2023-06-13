@@ -22,12 +22,10 @@ public class EndToEnd {
 
     @BeforeMethod
     public void testInit() {
-
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
         driver = new ChromeDriver(options);
-
     }
 
     @AfterMethod
@@ -51,18 +49,14 @@ public class EndToEnd {
         return webDriverWait.until(ExpectedConditions.elementToBeClickable(by));
     }
 
-    @Test(priority = 1)
-    public void completePurchaseSuccessfully_whenNewClient() {
-        driver.navigate().to("https://demos.bellatrix.solutions");
-
-        //HOME PAGE
+    private void addRocketToCart() {
         var addToCartFalcon9 = waitAndFindElement(By.cssSelector("[data-product_id='28']"));
         addToCartFalcon9.click();
 
         var viewCartBtn = waitAndFindElement(By.cssSelector(".added_to_cart"));
         viewCartBtn.click();
-
-        //CART DETAIL PAGE
+    }
+    private void applyCoupon() {
         var couponCodeTxt = waitAndFindElement(By.cssSelector("#coupon_code"));
         couponCodeTxt.sendKeys("happybirthday");
 
@@ -71,7 +65,8 @@ public class EndToEnd {
 
         var alertMessageWhenAfterAppliedCoupon = waitAndFindElement(By.cssSelector("[class*='message']"));
         Assert.assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
-        
+    }
+    private void increaseProductQuantity() {
         var increaseQtyTxt = waitAndFindElement(By.cssSelector("[id*='quantity']"));
         increaseQtyTxt.clear();
         increaseQtyTxt.sendKeys("2");
@@ -81,6 +76,28 @@ public class EndToEnd {
 
         var totalPriceLbl = waitAndFindElement(By.xpath("//*[@class='order-total']//span"));
         Assert.assertEquals(totalPriceLbl.getText(), "114.00€");
+    }
+    private void login(String username) {
+        var usernameTxt = waitAndFindElement(By.id("username"));
+        usernameTxt.sendKeys(username);
+
+        var passwordTxt = waitAndFindElement(By.id("password"));
+        passwordTxt.sendKeys(GetUserPasswordFromDb(username));
+
+        var loginBtn = waitAndFindElement(By.cssSelector("button[class*=login]"));
+        loginBtn.click();
+    }
+
+    @Test(priority = 1)
+    public void completePurchaseSuccessfully_whenNewClient() {
+        driver.navigate().to("https://demos.bellatrix.solutions");
+
+        //HOME PAGE
+        addRocketToCart();
+
+        //CART DETAIL PAGE
+        applyCoupon();
+        increaseProductQuantity();
 
         var checkoutBtn = waitAndFindElement(By.cssSelector(".checkout-button"));
         checkoutBtn.click();
@@ -140,48 +157,19 @@ public class EndToEnd {
         driver.navigate().to("https://demos.bellatrix.solutions");
 
         //HOME PAGE
-        var addToCartFalcon9 = waitAndFindElement(By.cssSelector("[data-product_id='28']"));
-        addToCartFalcon9.click();
-
-        var viewCartBtn = waitAndFindElement(By.cssSelector(".added_to_cart"));
-        viewCartBtn.click();
+        addRocketToCart();
 
         //CART DETAIL PAGE
-        var couponCodeTxt = waitAndFindElement(By.cssSelector("#coupon_code"));
-        couponCodeTxt.sendKeys("happybirthday");
-
-        var applyCouponBtn = waitAndFindElement(By.cssSelector("[name='apply_coupon']"));
-        applyCouponBtn.click();
-
-        var alertMessageWhenAfterAppliedCoupon = waitAndFindElement(By.cssSelector("[class*='message']"));
-        Assert.assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
-
-        
-        var increaseQtyTxt = waitAndFindElement(By.cssSelector("[id*='quantity']"));
-        increaseQtyTxt.clear();
-        increaseQtyTxt.sendKeys("2");
-
-        var updateCartBtn = waitToBeClickable(By.cssSelector("[name*='update']"));
-        updateCartBtn.click();
-
-        var totalPriceLbl = waitAndFindElement(By.xpath("//*[@class='order-total']//span"));
-        Assert.assertEquals(totalPriceLbl.getText(), "114.00€");
+        applyCoupon();
+        increaseProductQuantity();
 
         var checkoutBtn = waitAndFindElement(By.cssSelector(".checkout-button"));
         checkoutBtn.click();
-        
 
         var loginLnk = waitAndFindElement(By.linkText("Click here to login"));
         loginLnk.click();
 
-        var usernameTxt = waitAndFindElement(By.id("username"));
-        usernameTxt.sendKeys(purchaseEmail);
-
-        var passwordTxt = waitAndFindElement(By.id("password"));
-        passwordTxt.sendKeys(GetUserPasswordFromDb(purchaseEmail));
-
-        var loginBtn = waitAndFindElement(By.cssSelector("button[class*=login]"));
-        loginBtn.click();
+        login(purchaseEmail);
 
         var placeOrderBtn = waitAndFindElement(By.cssSelector("#place_order"));
         placeOrderBtn.click();
@@ -202,34 +190,18 @@ public class EndToEnd {
         var myAccountLink = waitAndFindElement(By.linkText("My account"));
         myAccountLink.click();
 
-        var usernameTxt = waitAndFindElement(By.id("username"));
-        usernameTxt.sendKeys(purchaseEmail);
-
-        var passwordTxt = waitAndFindElement(By.id("password"));
-        passwordTxt.sendKeys(GetUserPasswordFromDb(purchaseEmail));
-
-        
-
-        var loginBtn = waitAndFindElement(By.cssSelector("button[class*=login]"));
-        loginBtn.click();
-
-        
+        login(purchaseEmail);
 
         var ordersLbl = waitAndFindElement(By.linkText("Orders"));
         ordersLbl.click();
-        
 
         var viewDetailOrderBtn = waitAndFindElements(By.linkText("View"));
         viewDetailOrderBtn.get(0).click();
-        
 
         var orderName = waitAndFindElement(By.cssSelector("h1"));
         var expectOrderName = String.format("Order #%s", purchaseOrderNumber);
         Assert.assertEquals(orderName.getText(), expectOrderName);
-
     }
-
-
 
     private String GetUserPasswordFromDb(String userName)
     {
