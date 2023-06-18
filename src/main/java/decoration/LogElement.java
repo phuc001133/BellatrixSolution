@@ -14,25 +14,25 @@ public class LogElement extends ElementDecoration {
 
     @Override
     public String getText() {
-        System.out.println(String.format("decoration.Element Text = %s", element.getText()));
+        System.out.printf("decoration.Element Text = %s%n", element.getText());
         return element.getText();
     }
 
     @Override
     public Boolean isEnable() {
-        System.out.println(String.format("decoration.Element Enable = %b", element.isEnable()));
+        System.out.printf("decoration.Element Enable = %b%n", element.isEnable());
         return element.isEnable();
     }
 
     @Override
     public Boolean isDisplayed() {
-        System.out.println(String.format("decoration.Element Displayed = %b", element.isDisplayed()));
+        System.out.printf("decoration.Element Displayed = %b%n", element.isDisplayed());
         return element.isDisplayed();
     }
 
     @Override
     public void typeText(String text) {
-        System.out.println(String.format("Type text = = %s", text));
+        System.out.printf("Type text = = %s%n", text);
         element.typeText(text);
     }
 

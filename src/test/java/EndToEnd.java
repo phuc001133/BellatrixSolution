@@ -1,3 +1,6 @@
+import decoration.Browser;
+import decoration.Driver;
+import decoration.WebCoreDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -14,9 +17,10 @@ import org.testng.annotations.Test;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 
 public class EndToEnd {
-    private WebDriver driver;
+    private WebCoreDriver driver;
     private static String purchaseEmail;
     private static String purchaseOrderNumber;
 
@@ -25,7 +29,7 @@ public class EndToEnd {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
-        driver = new ChromeDriver(options);
+        driver.start(Browser.CHROME);
     }
 
     @AfterMethod
@@ -90,7 +94,7 @@ public class EndToEnd {
 
     @Test(priority = 1)
     public void completePurchaseSuccessfully_whenNewClient() {
-        driver.navigate().to("https://demos.bellatrix.solutions");
+        driver.goToUrl("https://demos.bellatrix.solutions");
 
         //HOME PAGE
         addRocketToCart();
@@ -154,7 +158,7 @@ public class EndToEnd {
 
     @Test(priority = 2)
     public void completePurchaseSuccessfully_whenExistingClient() {
-        driver.navigate().to("https://demos.bellatrix.solutions");
+        driver.goToUrl("https://demos.bellatrix.solutions");
 
         //HOME PAGE
         addRocketToCart();
@@ -185,7 +189,7 @@ public class EndToEnd {
 
     @Test(priority = 3)
     public void correctOrderDataDisplayed_whenNavigateToMyAccountOrderSection() {
-        driver.navigate().to("https://demos.bellatrix.solutions");
+        driver.goToUrl("https://demos.bellatrix.solutions");
 
         var myAccountLink = waitAndFindElement(By.linkText("My account"));
         myAccountLink.click();
@@ -208,4 +212,7 @@ public class EndToEnd {
         return "@purISQzt%%DYBnLCIhaoG6$";
     }
 
+    private String generateUniqueEmail() {
+        return String.format("%s@berlinspaceflowers.com", UUID.randomUUID());
+    }
 }
