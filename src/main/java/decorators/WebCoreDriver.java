@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WebCoreDriver extends Driver{
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private WebDriver webDriver;
+    private WebDriverWait webDriverWait;
 
     @Override
     public void start(Browser browser) {
@@ -28,45 +28,45 @@ public class WebCoreDriver extends Driver{
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("--remote-allow-origins=*");
-                driver = new ChromeDriver(options);
+                webDriver = new ChromeDriver(options);
                 break;
             case FIREFOX:
                 WebDriverManager.firefoxdriver().setup();
-                driver = new FirefoxDriver();
+                webDriver = new FirefoxDriver();
                 break;
             case EDGE:
                 WebDriverManager.edgedriver().setup();
-                driver = new EdgeDriver();
+                webDriver = new EdgeDriver();
                 break;
             case SAFARI:
-                driver = new SafariDriver();
+                webDriver = new SafariDriver();
                 break;
             case INTERNET_EXPLORER:
                 WebDriverManager.iedriver().setup();
-                driver = new InternetExplorerDriver();
+                webDriver = new InternetExplorerDriver();
                 break;
             default:
                 throw new IllegalArgumentException(browser.name());
         }
-        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        webDriverWait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
     }
 
 
     @Override
     public void quit() {
-        driver.quit();
+        webDriver.quit();
     }
 
     @Override
     public void goToUrl(String url) {
-        driver.navigate().to(url);
+        webDriver.navigate().to(url);
     }
 
     @Override
     public Element findElement(By locator) {
         var nativeWebElement =
-                wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-        Element element = new WebCoreElement(driver, nativeWebElement, locator);
+                webDriverWait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        Element element = new WebCoreElement(webDriver, nativeWebElement, locator);
 
         Element logElement = new LogElement(element);
         return logElement;
@@ -74,10 +74,10 @@ public class WebCoreDriver extends Driver{
 
     @Override
     public List<Element> findElements(By locator) {
-        List<WebElement> nativeWebElements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
+        List<WebElement> nativeWebElements = webDriverWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
         var elements = new ArrayList<Element>();
         for (WebElement nativeWebElement:nativeWebElements) {
-            Element element = new WebCoreElement(driver, nativeWebElement, locator);
+            Element element = new WebCoreElement(webDriver, nativeWebElement, locator);
             Element logElement = new LogElement(element);
             elements.add(logElement);
         }

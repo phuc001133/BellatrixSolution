@@ -1,3 +1,4 @@
+import com.google.common.base.Stopwatch;
 import decorators.Browser;
 import decorators.Driver;
 import decorators.LoggingDriver;
@@ -8,37 +9,28 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class EndToEnd {
+    private static Stopwatch stopwatch;
     private Driver driver;
     private static String purchaseEmail;
     private static String purchaseOrderNumber;
 
     @BeforeMethod
     public void testInit() {
+        stopwatch = Stopwatch.createStarted();
         driver = new LoggingDriver(new WebCoreDriver());
         driver.start(Browser.CHROME);
+        System.out.printf(" end browser init: %d", stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     @AfterMethod
     public void testCleanup() {
         driver.quit();
+        System.out.printf(" after test: %d", stopwatch.elapsed(TimeUnit.SECONDS));
+        stopwatch.stop();
     }
-
-//    private WebElement driver.findElement(By by) {
-//        var webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(20));
-//        return webDriverWait.until(ExpectedConditions.presenceOfElementLocated(by));
-//    }
-//
-//    private List<WebElement> driver.findElements(By by) {
-//        var webDriverWait = new WebDriverWait(driver,Duration.ofSeconds(20));
-//        return webDriverWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
-//    }
-//
-//    private WebElement waitToBeClickable(By by) {
-//        var webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(20));
-//        return webDriverWait.until(ExpectedConditions.elementToBeClickable(by));
-//    }
 
     private void addRocketToCart() {
         var addToCartFalcon9 = driver.findElement(By.cssSelector("[data-product_id='28']"));
@@ -57,12 +49,13 @@ public class EndToEnd {
         var alertMessageWhenAfterAppliedCoupon = driver.findElement(By.cssSelector("[class*='message']"));
         Assert.assertEquals(alertMessageWhenAfterAppliedCoupon.getText(), "Coupon code applied successfully.");
     }
-    private void increaseProductQuantity() {
+    private void increaseProductQuantity() throws InterruptedException {
         var increaseQtyTxt = driver.findElement(By.cssSelector("[id*='quantity']"));
         increaseQtyTxt.typeText("2");
-
+        Thread.sleep(2000);
         var updateCartBtn = driver.findElement(By.cssSelector("[name*='update']"));
         updateCartBtn.click();
+        Thread.sleep(4000);
 
         var totalPriceLbl = driver.findElement(By.xpath("//*[@class='order-total']//span"));
         Assert.assertEquals(totalPriceLbl.getText(), "114.00€");
@@ -79,7 +72,8 @@ public class EndToEnd {
     }
 
     @Test(priority = 1)
-    public void completePurchaseSuccessfully_whenNewClient() {
+    public void completePurchaseSuccessfully_whenNewClient() throws InterruptedException {
+        System.out.printf("start completePurchaseSuccessfully_whenNewClient: %d", stopwatch.elapsed(TimeUnit.SECONDS));
         driver.goToUrl("https://demos.bellatrix.solutions");
 
         //HOME PAGE
@@ -87,6 +81,7 @@ public class EndToEnd {
 
         //CART DETAIL PAGE
         applyCoupon();
+        Thread.sleep(2000);
         increaseProductQuantity();
 
         var checkoutBtn = driver.findElement(By.cssSelector(".checkout-button"));
@@ -128,8 +123,8 @@ public class EndToEnd {
         phoneTxt.typeText("0912321233");
 
         var emailTxt = driver.findElement(By.cssSelector("#billing_email"));
-        emailTxt.typeText("info@berlinspaceflowers.com");
-        purchaseEmail = "info@berlinspaceflowers.com";
+        emailTxt.typeText(generateUniqueEmail());
+        purchaseEmail = generateUniqueEmail();
 
         var createAnAccountCkb = driver.findElement(By.cssSelector("#createaccount"));
         createAnAccountCkb.click();
@@ -139,11 +134,13 @@ public class EndToEnd {
 
         var receivedMessage = driver.findElement(By.cssSelector("h1"));
         Assert.assertEquals(receivedMessage.getText(), "Order received");
+        System.out.printf("End completePurchaseSuccessfully_whenNewClient: %d", stopwatch.elapsed(TimeUnit.SECONDS));
 
     }
 
     @Test(priority = 2)
-    public void completePurchaseSuccessfully_whenExistingClient() {
+    public void completePurchaseSuccessfully_whenExistingClient() throws InterruptedException {
+        System.out.printf("start completePurchaseSuccessfully_whenExistingClient: %d", stopwatch.elapsed(TimeUnit.SECONDS));
         driver.goToUrl("https://demos.bellatrix.solutions");
 
         //HOME PAGE
@@ -171,10 +168,12 @@ public class EndToEnd {
 
         var orderNumberLbl = driver.findElement(By.cssSelector(".order strong"));
         purchaseOrderNumber = orderNumberLbl.getText();
+        System.out.printf("End completePurchaseSuccessfully_whenExistingClient: %d", stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     @Test(priority = 3)
     public void correctOrderDataDisplayed_whenNavigateToMyAccountOrderSection() {
+        System.out.printf("start correctOrderDataDisplayed_whenNavigateToMyAccountOrderSection: %d", stopwatch.elapsed(TimeUnit.SECONDS));
         driver.goToUrl("https://demos.bellatrix.solutions");
 
         var myAccountLink = driver.findElement(By.linkText("My account"));
@@ -191,6 +190,7 @@ public class EndToEnd {
         var orderName = driver.findElement(By.cssSelector("h1"));
         var expectOrderName = String.format("Order #%s", purchaseOrderNumber);
         Assert.assertEquals(orderName.getText(), expectOrderName);
+        System.out.printf("End correctOrderDataDisplayed_whenNavigateToMyAccountOrderSection: %d", stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     private String GetUserPasswordFromDb(String userName)
