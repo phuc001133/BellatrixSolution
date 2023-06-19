@@ -1,8 +1,8 @@
-package decoration;
+package decorators;
 
 import org.openqa.selenium.By;
 
-public class LogElement extends ElementDecoration {
+public class LogElement extends ElementDecorator {
     protected LogElement(Element element) {
         super(element);
     }

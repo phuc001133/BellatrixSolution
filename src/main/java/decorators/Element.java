@@ -1,4 +1,4 @@
-package decoration;
+package decorators;
 
 import org.openqa.selenium.By;
 

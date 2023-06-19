@@ -1,4 +1,4 @@
-package decoration;
+package decorators;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class WebCoreElement extends Element{
+public class WebCoreElement extends Element {
 
     private final WebDriver webDriver;
     private final WebElement webElement;

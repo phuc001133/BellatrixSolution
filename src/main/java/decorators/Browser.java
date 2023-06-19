@@ -1,4 +1,4 @@
-package decoration;
+package decorators;
 
 public enum Browser {
     CHROME,

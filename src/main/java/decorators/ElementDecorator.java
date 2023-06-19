@@ -1,10 +1,10 @@
-package decoration;
+package decorators;
 
 import org.openqa.selenium.By;
 
-public class ElementDecoration extends Element {
+public class ElementDecorator extends Element {
     protected final Element element;
-    protected ElementDecoration(Element element) {
+    protected ElementDecorator(Element element) {
         this.element = element;
     }
 
